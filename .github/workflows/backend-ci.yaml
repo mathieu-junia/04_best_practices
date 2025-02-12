@@ -29,6 +29,13 @@ jobs:
       - name: Log in to the registry
         run: docker login ghcr.io -u ${{ secrets.GITHUB_TOKEN }} -p ${{ secrets.GITHUB_TOKEN }}
 
+
+      - name: Install Syft
+        run: |
+          wget https://raw.githubusercontent.com/anchore/syft/main/install.sh -o install-syft.sh
+          sh install-syft.sh
+          syft ghcr.io/mathieu-junia/backend:${{ github.sha }} -o spdx-json=sbom-backend.json
+
       - name: Push the Docker image
         run: |
           docker push ghcr.io/mathieu-junia/backend:${{ github.sha }}

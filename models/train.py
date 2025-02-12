@@ -1,4 +1,3 @@
-
 # Compute the prediction with onnxruntime.
 
 # Convert into ONNX format.
@@ -19,7 +18,6 @@ svc_linear.fit(X_train, y_train)
 y_pred = svc_linear.predict(X_test)
 accuracy_value = accuracy_score(y_test, y_pred)
 print("accuracy:", accuracy_value)
-
 
 initial_types = [
     ("float_input", FloatTensorType([None, svc_linear.n_features_in_])),
