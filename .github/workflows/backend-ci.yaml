@@ -32,8 +32,7 @@ jobs:
 
       - name: Install Syft
         run: |
-          wget https://raw.githubusercontent.com/anchore/syft/main/install.sh -o install-syft.sh
-          sh install-syft.sh
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
           syft ghcr.io/mathieu-junia/backend:${{ github.sha }} -o spdx-json=sbom-backend.json
 
       - name: Push the Docker image
