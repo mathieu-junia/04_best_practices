@@ -34,6 +34,7 @@ jobs:
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
           syft ghcr.io/mathieu-junia/backend:${{ github.sha }} -o spdx-json=sbom-backend.json
+          ls
 
       - name: Push the Docker image
         run: |
