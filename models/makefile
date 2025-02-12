@@ -22,5 +22,7 @@ grype:
 	--volume ./cve:/cve \
 	--name Grype anchore/grype:latest sbom:/sbom/sbom.json -o table -o cyclonedx-json=/cve/cve.json
 
-#grype sbom:./sbom/sbom.json
-#syft frontend:0.0.1 -o spdx-json=sbom-back-0.0.5.json
+# syft frontend:0.0.1 -o spdx-json=sbom-back-0.0.5.json
+# grype sbom:./sbom/sbom.json
+# oras discover ghcr.io/mathieu-junia/backend/artifact:cve --format tree
+# oras pull ghcr.io/mathieu-junia/backend/artifact:cve

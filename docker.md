@@ -34,306 +34,155 @@ blockquote:after{
 <!-- _class: lead -->
 
 
-# Containers
+# Best Practices
 
 ---
 
-# What  is a docker container ?
+# Think of that
 
-A Docker container is a lightweight, standalone, executable package of software that includes everything needed to run an application: code, runtime, system tools, system libraries and settings.
+You have a project to deploy.
 
----
-
-### Think of it like a shipping container
-
-* Standardized: Just like shipping containers are standardized in size and shape, Docker containers are standardized to run consistently across different environments.
-* Isolated: Each shipping container is isolated from others, preventing any interference. Similarly, Docker containers are isolated from each other and the host system, ensuring that applications don't conflict.
-* Portable: Shipping containers can be easily transported between ships, trains, and trucks. Docker containers can be easily moved between different machines running Docker, whether it's your laptop, a server in your data center, or a cloud provider.
+Data Scientist : "I've train my classification model with a SVM on scikit-learn, it's good we're ready to ship."
 
 ---
 
-## Benefits of using Docker containers
+# Think of that
 
-* Consistency: Applications run the same way across different environments, from development to production.
-* Portability: Easily move applications between different machines and cloud providers.
-* Efficiency: Containers are lightweight and use fewer resources than VMs.
-* Speed: Containers start up quickly, making it easier to deploy and scale applications.
-* Isolation: Applications are isolated from each other, preventing conflicts and improving security.
+3 weeks later.
 
----
+Data Scientist : "The last model was crap ! Now I've used XGBosst, Gradient Boosted Tree for the win !."
 
-# How do we write a dockerfile ?
-
-A Dockerfile is a text file that contains all the instructions Docker needs to build an image. It's essentially a recipe for creating a container.
-
-**Basic Structure**:
-
-A Dockerfile starts with a `FROM` instruction, specifying the base image to build upon. This could be an operating system like Ubuntu or a pre-configured image with tools you need, like Python or Node.js. Subsequent instructions add layers to this base image, installing software, copying files, and setting up the environment.
 
 ---
 
-`FROM <image>`: Specifies the base image.
-```docker
-FROM ubuntu:latest
-```
+# Think of that
 
-`WORKDIR <path>`: Sets the working directory inside the container.
-```docker
-WORKDIR /app
-```
+6 weeks later
 
-`COPY <source> <destination>`: Copies files from your host machine to the container.
-```docker
-COPY . /app
-```
----
-
-`RUN <command>`: Executes commands inside the container, often to install software. .
-```docker
-RUN apt-get update && apt-get install -y python3
-```
-
-`CMD ["executable", "parameters"]`: Specifies the command to run when the container starts. There can be only one CMD instruction.
-```docker
-CMD ["python", "app.py"]
-```
+Data Scientist : "You know what ? I think I really love Multi Layer Perceptrons for classification method. This iteration is great."
 
 ---
 
-`EXPOSE <port>`: Exposes a port to allow communication with the container.
-```docker
-EXPOSE 8080
-```
+Each time, you have to rewrite the inference module.
 
-`ENV <variable> <value>`: Sets environment variables inside the container.
-```docker
-ENV FLASK_APP app.py
-```
----
-
-```docker
-FROM python:3.9-slim-buster
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-
-EXPOSE 5000
-
-CMD ["flask", "run"]
-```
+![center](./includes/Shit%20_%20am%20i%20a%20joke%20to%20you_%20.png)
 
 ---
 
-# Building and Running
+# ONNX to the rescue
 
-Once you have a Dockerfile, you can build an image using the docker build command:
-
-* `docker build -f Dockerfile -t my-app-image .`
-* `docker build -f Dockerfile -t my-app-image frontend`
-
-And then run a container from that image:
-
-* `docker run -p 5000:5000 my-app-image`
+[ONNX](https://onnx.ai/) stands for **Open Neural Network Exchange**. It's an open format for representing machine learning models. Think of it as a universal language that allows different AI frameworks to "talk" to each other.
 
 ---
 
-### Differences between a dockerfile, a container and an image
+* **Open Format**: ONNX isn't tied to a specific company or software. It's a community-driven standard, which means it's constantly evolving and improving.
+* **Representing Machine Learning Models**: Machine learning models are complex structures with layers of interconnected nodes. ONNX provides a way to describe these structures in a standardized way, regardless of how the model was originally built.
 
-1. Dockerfile:
-
-  * What it is: A text file containing instructions on how to build a Docker image. Think of it like a recipe or a blueprint.
-  * Purpose: To define the steps needed to create a consistent and reproducible environment for your application.
-  * Analogy: A recipe in a cookbook.
+We can even see them using [Netron](https://netron.app/).
 
 ---
 
-2. Docker Image:
-
-  * What it is: A read-only template or snapshot that includes everything needed to run an application: code, runtime, system tools, libraries, and settings. It's built from a Dockerfile.
-  * Purpose: To serve as a base for creating containers. You can have multiple containers running from the same image.
-  * Analogy: The cake you baked using the recipe.
+* **Interoperability**: This is the key benefit. ONNX makes it possible to:
+    * Train a model in one framework (like TensorFlow or PyTorch) and then use it in another (like Caffe2 or MXNet). This gives developers more flexibility and choice.
+    * Deploy models on different hardware platforms (CPUs, GPUs, mobile devices) without needing to rewrite the model for each one.
 
 ---
 
-3. Docker Container:
-
-  * What it is: A running instance of a Docker image. It's a lightweight and portable environment where your application actually executes.
-  * Purpose: To provide an isolated and consistent environment for your application to run, regardless of the underlying infrastructure.
-  * Analogy: A slice of the cake you baked.
+![center height:630](./includes/compatibility.png)
 
 ---
 
-|  Feature   |               Dockerfile                |                Docker Image                 |                 Docker Container                  |
-| :--------: | :-------------------------------------: | :-----------------------------------------: | :-----------------------------------------------: |
-|    Type    |                Text file                |             Read-only template              |                 Running instance                  |
-|  Purpose   |      Defines how to build an image      |  Serves as a base for creating containers   | Provides an isolated environment for running apps |
-| Mutability | Immutable (you don't change the recipe) | Immutable (you can't change the baked cake) |   Mutable (you can add frosting to your slice)    |
+# OCI artifact
+
+The **Open Container Initiative** (OCI) is a project that aims to standardize container formats and runtimes. One of the key aspects of this standardization is the concept of an **OCI artifact**.
+
+**What is an OCI artifact?**
+At its core, an OCI artifact is any file or collection of files that can be stored and managed within an OCI-compliant registry. While container images are the most common type of OCI artifact, the specification is designed to be flexible enough to accommodate a wide range of other content types.
 
 ---
 
-## Best Practices
+# Why are OCI artifacts important?
 
-* Use Official Images: Start with well-maintained base images from Docker Hub.
-* Minimize Layers: Combine multiple commands into a single RUN instruction to reduce image size.
-* Use `.dockerignore`: Create a `.dockerignore` file to exclude unnecessary files from being copied into the image.
-* Multi-Stage Builds: Use multiple `FROM` instructions to create intermediate images for compilation or dependency installation, then copy only the necessary artifacts to the final image.
-* Security: Run containers as a non-root user whenever possible.
 
----
-
-## Multi-stage build
-
-A multi-stage build in Docker is a technique that allows you to use multiple FROM instructions in your Dockerfile to create intermediate images during the build process.  This is useful for optimizing your final image size and improving build efficiency.
+* **Standardization**: They provide a consistent way to package and distribute various types of software components, regardless of the tools or platforms used to create them.
+* **Interoperability**: OCI artifacts can be easily shared and used across different environments, promoting collaboration and simplifying deployment workflows.
+* **Security**: OCI registries offer built-in mechanisms for managing access control and ensuring the integrity of artifacts, enhancing the security of the software supply chain.
 
 ---
 
-## The Problem with Single-Stage Builds
+# Examples of OCI artifacts:
 
-In a typical single-stage build, all the commands in your Dockerfile contribute to the final image size.  Often, you need tools and dependencies for building your application that aren't needed at runtime. For example:
-
-* Compilers: You might need a compiler like GCC to build your application, but the compiler itself isn't needed in the final image.
-* Build Tools: Tools like Maven or npm are used for building Java or Node.js applications, but they aren't required to run the application.
-* Intermediate Files: Temporary files created during the build.
-
----
-
-## How Multi-Stage Builds Solve the Problem
-
-Multi-stage builds let you use separate "stages" for different parts of your build process.  You can use one stage for building your application, including all the necessary build tools and dependencies.  Then, you can create a second, smaller stage that copies only the essential artifacts from the build stage into the final image.
+* **Container images**: These are the most common type of OCI artifact, containing the necessary files and instructions to run an application in a container.
+* **Software Bill of Materials (SBOMs)**: These documents provide a list of all the components included in a software application, helping to track dependencies and identify potential vulnerabilities.
+* **Machine Learning models**.
+* [OCI as a Standard for ML Artifact Storage & Retrieval](https://static.sched.com/hosted_files/kccnceu2024/57/OCI%20ML%20Storage%20Standard%20%281%29.pdf)
 
 ---
 
-```docker
-# Stage 1: Build the application
-FROM node:16 AS build-stage
+Tools like `oras` and `cosign` can be used to interact with OCI registries and manage OCI artifacts. For example, you can use `oras` to push a Helm chart to a registry or pull an SBOM from a registry.
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-# Stage 2: Create the final image
-FROM nginx:alpine
-
-COPY --from=build-stage /app/build /usr/share/nginx/html
-```
+![center](./includes/oras.png)
 
 ---
 
-## Benefits of Multi-Stage Builds:
+[ORAS](https://oras.land/) (OCI Registry As Storage) is a command-line tool that allows you to work with OCI artifacts. It's like a specialized tool for managing different kinds of files and data within an OCI-compliant registry.
 
-* Smaller Image Sizes: The final image only contains the necessary runtime components, significantly reducing its size. Faster downloads, deployments, and reduced storage costs.
-* Improved Build Caching: Docker can cache the intermediate stages, speeding up subsequent builds if the build steps haven't changed.
-* Simplified Dockerfiles: You can keep the build logic separate from the final image configuration, making your Dockerfiles easier to understand and maintain.
-* Security: By not including build tools and dependencies in the final image, you reduce the potential attack surface.
+**What it does**:
 
----
-
-# Docker capabilities
-
-Docker capabilities are a security feature that allows you to fine-tune the privileges granted to a container. They're based on the Linux kernel's capability system, which breaks down the traditional all-or-nothing root privilege model into smaller, more granular permissions.
-
-**How do Docker capabilities work?**
-Linux capabilities divide the privileges traditionally associated with the root user into distinct units. For example, instead of giving a container full root access, you can grant it only the `CAP_NET_BIND_SERVICE` capability, which allows it to bind to privileged ports (those below 1024).
+* **Manages OCI artifacts**: ORAS is designed to handle various types of content beyond just container images. This includes things like Helm charts, Software Bill of Materials (SBOMs), and other kinds of software-related files.
 
 ---
 
-# Common Docker capabilities
-
-* `CAP_NET_ADMIN`: Allows network administration tasks, like configuring interfaces or firewall rules.
-* `CAP_SYS_ADMIN`: Grants a wide range of system administration capabilities, including mounting file systems and managing devices. (Use with caution!)
-* `CAP_FOWNER`: Allows the container to act as the file owner, even if it doesn't actually own the file.
-* `CAP_CHOWN`: Allows the container to change the ownership of files.
+* **Interacts with OCI registries**: It allows you to push (upload) and pull (download) these artifacts to and from OCI-compliant registries, which are like central storage locations for these files.
+* **Provides a command-line interface**: ORAS offers a set of commands that you can use in your terminal or scripts to perform actions like uploading, downloading, and managing your artifacts.
 
 ---
 
-# Managing Docker capabilities
+**Why it's useful**:
 
-* Adding capabilities: Use the `--cap-add` flag when running a container to grant specific capabilities.
-```sh
-docker run --cap-add=NET_ADMIN <image>
-```
-
-* Removing capabilities: Use the `--cap-drop` flag to revoke capabilities.
-```sh
-docker run --cap-drop=ALL --cap-add=NET_BIND_SERVICE <image>
-```
-`—-cap-add=all`
+* **Standardized management**: ORAS helps to standardize how you handle different types of software components, making it easier to manage them consistently across different projects and environments.
+* **Flexibility**: It allows you to store and manage a wide range of artifacts in a single registry, simplifying your workflow and reducing the need for multiple specialized tools.
+* **Improved collaboration**: By providing a common way to manage artifacts, ORAS makes it easier for teams to share and collaborate on software projects.
 
 ---
 
-# Linux Container vs Windows Container
+# SBOM
 
-**The Core Difference: The Kernel**
-
-The most fundamental difference lies in the kernel.
-
-* Linux containers share the kernel of the Linux host operating system. This is the core of how containers achieve efficiency.
-* Windows containers also share a kernel, but it's a Windows kernel. This means they can only run on Windows hosts.
+An SBOM, or **Software Bill of Materials**, is essentially a detailed list of all the components that make up a piece of software.  Think of it like an ingredient list for a recipe, but for software. It identifies all the software packages, libraries, and other dependencies that are included in a given application.
 
 ---
 
-This kernel difference has significant implications:
+# What it contains
 
-* Operating System Compatibility:
-    * Linux containers can only run on Linux hosts.
-    * Windows containers can only run on Windows hosts.
-* Application Compatibility:
-    * Linux containers are primarily used for applications designed for Linux environments.
-    * Windows containers are designed for applications that rely on the Windows operating system, libraries, and APIs.
-
----
-
-In practice
-
-* **Linux Containers on Linux**: This is the "classic" container scenario. Containers share the host's Linux kernel directly, making them very lightweight and efficient.
-* **Linux Containers on Windows**: This is possible, but it requires a Linux virtual machine (VM) running on the Windows host. Docker Desktop for Windows, for example, uses a lightweight Linux VM to run Linux containers.
-* **Windows Containers on Windows**: Windows containers run directly on the Windows host, sharing its kernel.
+An SBOM typically includes information about each component, such as:
+* Name and version: The specific name and version of the software component.
+* Supplier: Who created or maintains the component.
+* License: The licensing terms governing the use of the component.
+* Hashes: Cryptographic hashes that can be used to verify the integrity of the component.
 
 ---
 
-# Containers vs Virtual Machines
+# Why it's important 1/2
 
+SBOMs are becoming increasingly crucial for software security and supply chain management for several reasons:
 
-|    Feature     | Virtual Machines (VMs) |      Containers       |
-| :------------: | :--------------------: | :-------------------: |
-|       OS       |  Separate OS for each  | Shares host OS kernel |
-|   Isolation    |         Strong         |     Process-level     |
-| Resource Usage |          High          |          Low          |
-|  Startup Time  |          Slow          |         Fast          |
-|      Size      |         Large          |         Small         |
+* **Vulnerability management**: By knowing what components are in your software, you can quickly identify if any of them have known vulnerabilities. This allows you to prioritize patching and reduce your risk of attack.
+* **License compliance**: SBOMs help you understand the licensing obligations associated with the software you use. This is important for avoiding legal issues.
 
 ---
 
-# Docker compose files
+# Why it's important 2/2
 
-A Docker Compose file is a YAML file that defines a multi-container Docker application.  It's a way to manage and orchestrate multiple Docker containers as a single unit.  Think of it as a blueprint for your entire application stack, specifying all the services (containers) that make up your application, their dependencies, and how they interact.
 
----
+* **Supply chain transparency**: SBOMs provide visibility into the software supply chain, making it easier to track the origin of components and identify potential risks.
+* **Improved security posture**: Having an SBOM allows organizations to proactively manage their software risk and respond more effectively to security incidents.
 
-# What it does
-
-* **Defines Services**: Each service in the Compose file represents a container. You specify the image to use, ports to expose, volumes to mount, environment variables, and other configuration options for each container.
-* **Manages Dependencies**: You can define dependencies between services. For example, you can specify that a web application service depends on a database service, ensuring that the database starts before the web application.
+There are standard formats for SBOMs, like **SPDX** (Software Package Data Exchange) and **CycloneDX**, which make it easier to share and process SBOM data.
 
 ---
 
-# What it does
+# Syft & Grype
 
-* **Simplifies Multi-Container Management**: Instead of running multiple docker run commands to start each container individually, you can use a single docker-compose up command to start all the services defined in the Compose file.
-* **Configuration as Code**: The Compose file serves as a configuration file for your application stack, making it easy to share, version control, and reproduce your application environment.
+* [Syft](https://github.com/anchore/syft) is a command-line tool and Go library that helps you generate a Software Bill of Materials (SBOM) for your software.
 
----
-
-# Why it's useful
-
-* **Local Development**: Docker Compose is excellent for setting up and managing complex development environments. You can easily define all the services your application needs (database, web server, cache, etc.) and run them together locally.
-* **Testing**: You can use Docker Compose to create consistent testing environments that mirror your production setup.
-* **Simple Deployments**: While not typically used for large-scale production deployments (Kubernetes is better for that), Docker Compose can be useful for simpler deployments or for deploying to single server instances.
+* [Grype](https://github.com/anchore/grype) is an open-source vulnerability scanner for container images and filesystems. It helps you find known CVEs in the software that you're using. CVE stands for **Common Vulnerabilities and Exposures**. It's like a universal naming system for publicly disclosed security flaws in software.
