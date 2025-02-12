@@ -1,6 +1,3 @@
-# Compute the prediction with onnxruntime.
-
-# Convert into ONNX format.
 from skl2onnx import __max_supported_opset__, convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 from sklearn import datasets
