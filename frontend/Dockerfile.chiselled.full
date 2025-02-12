@@ -1,0 +1,38 @@
+FROM golang:1.23.5 AS rootfsbuilder
+
+RUN ["go", "install", "github.com/canonical/chisel/cmd/chisel@latest"]
+
+WORKDIR /rootfs
+
+# Use chisel to cut out the necessary package slices from the
+# chisel:22.04 image and store them in the /rootfs directory
+RUN ["chisel", "cut", "--release", "ubuntu-24.04",\
+  "--root", "/rootfs", "python3.12_standard"]
+
+FROM python:3.12-slim-bullseye AS builder
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+WORKDIR /app
+
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+  --mount=type=bind,source=uv.lock,target=uv.lock \
+  --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+  uv sync --frozen --no-install-project --no-editable
+
+FROM scratch
+
+COPY --from=rootfsbuilder ["/rootfs/", "/"]
+COPY /rest /app/rest
+COPY main.py /app/main.py
+
+# Copy the environment
+COPY --from=builder /app/.venv /app/.venv
+
+# Set environment variables
+ENV PATH="/app/.venv/bin:$PATH" PYTHONPATH="app/.venv/lib/python3.12/site-packages"
+
+EXPOSE 8501
+
+ENTRYPOINT ["python3.12", "-m", "streamlit", "run",  "app/main.py", "--server.port", "8501"]

@@ -1,0 +1,31 @@
+FROM python:3.12-slim-bullseye AS builder
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+WORKDIR /app
+
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+  --mount=type=bind,source=uv.lock,target=uv.lock \
+  --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+  uv sync --frozen --no-install-project --no-editable
+
+FROM python:3.12-slim-bullseye
+
+
+COPY config /config
+COPY routes /routes
+COPY main.py /main.py
+
+# Copy the environment
+COPY --from=builder /app/.venv /.venv
+
+# Set environment variables
+ENV PATH="/.venv/bin:$PATH" PYTHONPATH="/.venv/lib/python3.12/site-packages"
+
+EXPOSE 8501
+
+# Let's be specific about which python we'll use.
+# Note that we do not have uv anymore in this stage !
+CMD ["/.venv/bin/python3.12", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
