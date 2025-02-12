@@ -36,6 +36,12 @@ jobs:
           syft ghcr.io/mathieu-junia/backend:${{ github.sha }} -o spdx-json=sbom-backend.json
           ls
 
+      - name: Install Grype
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          grype sbom:./sbom-backend.json -o cyclonedx-json=cve-backend.json
+          ls
+
       - name: Push the Docker image
         run: |
           docker push ghcr.io/mathieu-junia/backend:${{ github.sha }}

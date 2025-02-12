@@ -21,3 +21,6 @@ grype:
 	--volume ./sbom:/sbom \
 	--volume ./cve:/cve \
 	--name Grype anchore/grype:latest sbom:/sbom/sbom.json -o table -o cyclonedx-json=/cve/cve.json
+
+#grype sbom:./sbom/sbom.json
+#syft frontend:0.0.1 -o spdx-json=sbom-back-0.0.5.json
