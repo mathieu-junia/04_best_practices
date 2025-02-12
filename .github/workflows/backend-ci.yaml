@@ -59,5 +59,6 @@ jobs:
       - name: Attach files to an existing artifact with ORAS
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | oras login ghcr.io -u ${{ secrets.GITHUB_TOKEN }} --password-stdin
-          oras attach ghcr.io/mathieu-junia/backend:${{ github.sha }} sbom-backend.json --artifact-type example/sbom
-          oras attach ghcr.io/mathieu-junia/backend:${{ github.sha }} cve-backend.json --artifact-type example/cve
+          oras push ghcr.io/mathieu-junia/backend/artifact:sbom --artifact-type example/sbom sbom-backend.json
+          oras push ghcr.io/mathieu-junia/backend/artifact:cve --artifact-type example/cve cve-backend.json
+
