@@ -1,11 +1,12 @@
 from fastapi import FastAPI, status
-from routes import juniagpt
+from routes import juniagpt, inference
 from starlette.responses import RedirectResponse
 
 app = FastAPI(title="JuniaGPT", version="1.0.0")
 
 
 app.include_router(juniagpt.router)
+app.include_router(inference.router)
 
 
 @app.get(

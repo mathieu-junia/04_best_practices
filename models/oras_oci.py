@@ -12,7 +12,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 client = oras.client.OrasClient(insecure=True)
-client.push(files=["svc_iris.onnx"], target="localhost:5000/isen/svc_iris:v1")
+# client.push(files=["svc_iris.onnx"], target="localhost:5000/isen/svc_iris:v1")
 
 model = client.pull(target="localhost:5000/isen/svc_iris:v1", outdir="model")
 print(model)

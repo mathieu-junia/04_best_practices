@@ -1,5 +1,3 @@
-from skl2onnx import __max_supported_opset__, convert_sklearn
-from skl2onnx.common.data_types import FloatTensorType
 from sklearn import datasets
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -16,6 +14,10 @@ y_pred = svc_linear.predict(X_test)
 accuracy_value = accuracy_score(y_test, y_pred)
 print("accuracy:", accuracy_value)
 
+
+from skl2onnx import __max_supported_opset__, convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+
 initial_types = [
     ("float_input", FloatTensorType([None, svc_linear.n_features_in_])),
 ]
@@ -28,3 +30,4 @@ model_onnx = convert_sklearn(
 
 with open("svc_iris.onnx", "wb") as f:
     f.write(model_onnx.SerializeToString())
+print("done")
